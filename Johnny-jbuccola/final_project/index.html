@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <title>FrogPortal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/w3css.css">
+    <link rel="stylesheet" href="./css/site.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <style>
+        body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+        .w3-sidenav a,.w3-sidenav h4 {font-weight:bold}
+    </style>
+    <body class="w3-light-grey w3-content" style="max-width:1600px">
+
+        <!--Overlay when not logged in-->
+        <div id="login-overlay" class="overlay shown">
+            <div class="overlay-content">
+                <div class="loader hidden w3-padding-64"><i class="fa fa-cog fa-spin fa-5x fa-fw"></i></div>
+                <div id="overlay-forms">
+                    <h1>Please log in using your Autodesk account</h1>
+                    <div id="login-container" class="w3-padding login-wrapper">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                            <input id="email" class="form-control" type="text" size="25" placeholder="Email address">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input id="password" class="form-control" type="password" size="25" placeholder="Password">
+                        </div>
+                        <button id="login-btn" type="button" class="input-group w3-btn w3-blue w3-round">Log In</button>
+                        <a href="https://accounts.autodesk.com/register?theme=light" target="_blank">Don't have an Autodesk account?</a>
+                    </div>
+                </div>
+            </div>  
+        </div>
+
+        <!-- Sidenav/User info -->
+        <nav id="sidenav" class="w3-sidenav w3-white hidden" style="z-index:3;width:200px;" id="mySidenav">
+            <br>
+            <div class="w3-container">
+                <img src="./images/PFI_LogoTM_NoBackground.png" style="width:100%;" class="w3-round"><br><br>
+                <h4 class="w3-padding-0"><b>Project Portal</b></h4>
+                <p class="w3-text-grey">for Architects, General Contractors, and Designers</p>
+            </div>
+            <div id='user-data-wrapper' class="w3-container">
+                <h5 class="w3-padding-0">Current User:</h5>
+                <div id='user-data' class="w3-text-grey">
+                    <span id="firstName"></span><span> </span><span id="lastName"></span>
+                    <br>
+                    <span id="role"></span>
+                    <br>
+                    <span id="org"></span>
+                    <br>
+                    <a class="w3-padding-0" id='user-url' target="_blank" href=''>Edit Profile</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- !PAGE CONTENT! -->
+       <div class="w3-main" style="margin-left:200px">
+        
+        <!-- Header -->
+        <header class="w3-container" id="portfolio">
+            <a href="#"><img src="" style="width:65px;" class="w3-circle w3-right w3-margin w3-hide-large w3-hover-opacity"></a>
+            <span class="w3-opennav w3-hide-large w3-xxlarge w3-hover-text-grey"><i class="fa fa-bars"></i></span>
+            <h1><b>My Projects</b></h1>
+            <div class="w3-section w3-bottombar w3-padding-16">
+                <span class="w3-margin-right">Filter:</span>
+                <button class="w3-btn">ALL</button>
+                <button class="w3-btn w3-white"><i class="fa fa-bolt w3-margin-right"></i>In Design</button>
+                <button class="w3-btn w3-white w3-hide-small"><i class="fa fa-industry w3-margin-right"></i>In Production</button>
+                <button class="w3-btn w3-white w3-hide-small"><i class="fa fa-check-square-o w3-margin-right"></i>Completed</button>
+            </div>
+        </header>
+
+        <!-- Handlebars Template -->
+        <div id="projects-container" class="w3-row-padding">
+            <div id="loader" class="w3-margin-bottom loader hidden" align="center"><h3>Loading Projects...</h3><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
+            <script type="text/x-handlebars-template" id="projectTemplate">
+                {{#each project}}
+                    <section class="project">
+                    <div id="project-item" class="w3-third w3-container w3-margin-bottom w3-hover-opacity" border="5px">
+                        <div align="center"><i class="fa fa-folder-open-o fa-4x" aria-hidden="true"></i></div>
+                        <div class="w3-container w3-white">
+                            <p id="project-descriptor"><b>{{projectCode}} - {{projectName}}</b></p>
+                            <p>{{projectCustomer}}</p>
+                            <p style="color:{{color}}"><b>{{projectStatus}}</b></p>
+                            <p id="dmsid" class="hidden">{{dmsid}}</p>
+                        </div>
+                    </div>
+                    </section>
+                {{/each}}
+            </script>
+        </div>
+
+        <!--Project Popup-->
+        <div id="project-overlay" class="overlay hidden">
+            <div class="w3-container" id="dialog" title="Project Details">
+                <h4>{{Project Descriptor}}</h4>
+                <div id="bom-loader"><p class="w3-margin-bottom w3-padding-64 w3-margin-top" align="center">  Loading...<br><br><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></p></div>
+                <div id="bom-accordion" class="w3-container w3-padding w3-white" style="margin-bottom:32px">
+                </div>
+            </div>  
+        </div>
+
+        <!-- Future usage -->
+        <div class="w3-container w3-padding w3-white">
+            <h2>Active Configurator Projects</h2>
+            <div id="config-accordion" class="w3-container w3-padding w3-white" style="margin-bottom:32px">
+                <h3>Project 1</h3>
+                <div>
+                    <p>Reserved for future functionality</p>
+               </div>
+                <h3>Project 2</h3>
+                <div>
+                    <p>Reserved for future functionality</p>
+                </div>
+            </div>
+            <button class="w3-btn w3-round w3-blue">Go to Building Configurator</button>
+        </div>
+        <!-- Footer -->
+        <footer class="w3-container w3-padding-32 w3-white">
+            <div class="w3-row-padding">
+                <div class="w3-third">
+                    <h3>About This Project</h3>
+                    <p>Created by Johnny Buccola for the GeneralAssemb.ly JavaScript web development course.</p>
+                    <a href="mailto:jbuccola@projectfrog.com">jbuccola@projectfrog.com</a>
+                </div>
+                <div id="auth_token" class="hidden"></div>
+                </div>
+            </div>
+        </footer>
+        <!-- End page content -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+        <script src="./js/app.js"></script>
+    </body>
+</html>
+     
